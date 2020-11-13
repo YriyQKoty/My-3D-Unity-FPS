@@ -4,16 +4,31 @@ using UnityEngine;
 
 public class PlayerCharacter : MonoBehaviour
 {
-    [SerializeField] private float _health;
+    [SerializeField] private float _maxHealth;
+    private float _currentHealth;
+    public bool IsAlive { get; set; }
 
     void Start()
     {
-        _health = 5;
+        IsAlive = true;
+        _currentHealth = _maxHealth;
     }
 
-    public void Hurt(float damage)
+    public void Hurt(int damage)
     {
-        _health -= damage;
-        Debug.Log($"Health is damaged at {damage}. Now {_health}");
+        _currentHealth -= damage;
+        Debug.Log($"Health is damaged at {damage}. Now {_currentHealth}");
+        
+        if (_currentHealth.Equals(0.0f))
+        {
+            IsAlive = false;
+            StartCoroutine(Die());
+        }
+    }
+
+    private IEnumerator Die()
+    {
+        Debug.Log("You`re dead.");
+        yield return new WaitForSeconds(2.0f);
     }
 }
