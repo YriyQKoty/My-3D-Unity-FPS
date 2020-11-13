@@ -1,20 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class WanderingAI : MonoBehaviour
 {
+
     [SerializeField] private float _speed;
     [SerializeField] private float _obstacleRange;
     [SerializeField] private GameObject _bulletPrefab;
+    
+    private ReactiveTarget _target;
     private GameObject _bullet;
     private Ray _ray;
 
-    public bool IsAlive { get; set; }
-
-    void Start()
+    private void Start()
     {
-        IsAlive = true;
+        _target = GetComponent<ReactiveTarget>();
     }
 
     // Update is called once per frame
@@ -25,17 +26,26 @@ public class WanderingAI : MonoBehaviour
 
     void Wander()
     {
-        if (IsAlive)
+        if (_target.IsAlive && !_target.PlayerIsDetected)
         {
-            Move();
+            StartMove();
         }
-
+        else if (_target.PlayerIsDetected)
+        {
+            StopMove();
+        }
+        
         Observe();
     }
 
-    void Move()
+    void StartMove()
     {
         transform.Translate(0, 0, _speed * Time.deltaTime);
+    }
+
+    void StopMove()
+    {
+        transform.Translate(0,0,0);
     }
 
     void Observe()
@@ -60,4 +70,6 @@ public class WanderingAI : MonoBehaviour
             }
         }
     }
+
+    
 }

@@ -5,16 +5,11 @@ using UnityEngine;
 
 public class Fireball : MonoBehaviour
 {
-    [SerializeField] private float _speed = 6.0f;
+    [SerializeField] private float _speed;
 
-    private float _damage = 1.0f;
-    // Start is called before the first frame update
-    void Start()
-    {
-       
-    }
+    private int _damage = 1;
+  
 
-    // Update is called once per frame
     void Update()
     {
         transform.Translate(0,0,_speed*Time.deltaTime);
@@ -31,7 +26,7 @@ public class Fireball : MonoBehaviour
 
         if (target != null)
         {
-            target.ReactToHit();
+            target.ReactToHit(_damage);
         }
         
         
