@@ -17,13 +17,15 @@ public class PlayerCharacter : MonoBehaviour
     public void Hurt(int damage)
     {
         _currentHealth -= damage;
-        Debug.Log($"Health is damaged at {damage}. Now {_currentHealth}");
         
         if (_currentHealth.Equals(0.0f))
         {
             IsAlive = false;
             StartCoroutine(Die());
+            return;
         }
+        
+        Debug.Log($"Health is damaged at {damage}. Now {_currentHealth}");
     }
 
     private IEnumerator Die()

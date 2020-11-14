@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -26,13 +27,17 @@ public class ReactiveTarget : MonoBehaviour
     public bool IsAlive { get; set; }
     public bool PlayerIsDetected { get; set; }
 
+    public event Action<float> OnHealthPictureChanged = delegate { };
 
     void Start()
     {
         _navAgent = GetComponent<NavMeshAgent>();
         _withinAggroColliders = new Collider[_maxColliders];
         _character = GetComponent<CharacterController>();
-
+    }
+    
+    private void OnEnable()
+    {
         this._currentHealth = this._maxHealth;
         IsAlive = true;
         PlayerIsDetected = false;
@@ -41,27 +46,45 @@ public class ReactiveTarget : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (Physics.OverlapSphereNonAlloc(this.gameObject.transform.position, _detectionRadius, _withinAggroColliders,
-            _aggroLayerMask) > 0)
+        if (IsAlive)
         {
-            PlayerIsDetected = true;
-            ChasePlayer(_withinAggroColliders[0].GetComponent<PlayerCharacter>());
+            if (Physics.OverlapSphereNonAlloc(this.gameObject.transform.position, _detectionRadius,
+                _withinAggroColliders,
+                _aggroLayerMask) > 0)
+            {
+                PlayerIsDetected = true;
+                ChasePlayer(_withinAggroColliders[0].GetComponent<PlayerCharacter>());
+            }
+            else
+            {
+                PlayerIsDetected = false;
+            }
         }
         else
         {
-            PlayerIsDetected = false;
+            _navAgent.SetDestination(gameObject.transform.position);
         }
+        
     }
+
+    
 
     public void ReactToHit(int damage)
     {
         _currentHealth -= damage;
-        Debug.Log($"Health is damaged at {damage}. Now {_currentHealth}");
+        
+        float currentHealthPicture = (float) _currentHealth / (float) _maxHealth;
+        OnHealthPictureChanged(currentHealthPicture);
+        
 
         if (_currentHealth.Equals(0.0f))
         {
-            FallingDead();
+            IsAlive = false;
+            StartCoroutine(Die());
+            return;
         }
+
+        Debug.Log($"Health is damaged at {damage}. Now {_currentHealth}");
     }
 
     private void ChasePlayer(PlayerCharacter player)
@@ -70,22 +93,8 @@ public class ReactiveTarget : MonoBehaviour
         _navAgent.SetDestination(player.transform.position);
     }
 
-
-    void FallingDead()
+    private IEnumerator Die()
     {
-        if (this.gameObject != null)
-        {
-            IsAlive = false;
-        }
-
-        StartCoroutine(Die());
-    }
-
-
-    IEnumerator Die()
-    {
-        this.transform.Rotate(-75, 0, 0);
-
         yield return new WaitForSeconds(1.75f);
 
         Destroy(this.gameObject);

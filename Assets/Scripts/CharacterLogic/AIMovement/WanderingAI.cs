@@ -30,7 +30,7 @@ public class WanderingAI : MonoBehaviour
         {
             StartMove();
         }
-        else if (_target.PlayerIsDetected)
+        else if (!_target.IsAlive || _target.PlayerIsDetected)
         {
             StopMove();
         }
@@ -53,7 +53,7 @@ public class WanderingAI : MonoBehaviour
         _ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
 
-        if (Physics.SphereCast(_ray, 0.25f, out hit))
+        if (Physics.SphereCast(_ray, 0.25f, out hit) && _target.IsAlive)
         {
             GameObject hitObject = hit.transform.gameObject;
             if (hitObject.GetComponent<PlayerCharacter>())
