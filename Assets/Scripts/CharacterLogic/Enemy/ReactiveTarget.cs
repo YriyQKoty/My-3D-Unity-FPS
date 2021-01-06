@@ -36,7 +36,7 @@ public class ReactiveTarget : MonoBehaviour
     
     private void OnEnable()
     {
-        this._currentHealth = this._maxHealth;
+        this._currentHealth = 5;
         IsAlive = true;
         PlayerIsDetected = false;
     }
@@ -73,16 +73,15 @@ public class ReactiveTarget : MonoBehaviour
         
         float currentHealthPicture = (float) _currentHealth / (float) _maxHealth;
         OnHealthPictureChanged(currentHealthPicture);
-        
 
-        if (_currentHealth.Equals(0.0f))
+        if (_currentHealth <= 0.0f)
         {
             IsAlive = false;
             StartCoroutine(Die());
             return;
         }
 
-        Debug.Log($"Health is damaged at {damage}. Now {_currentHealth}");
+        Debug.Log($"Enemy Health is damaged at {damage}. Now {_currentHealth}");
     }
 
     private void ChasePlayer(PlayerCharacter player)
@@ -94,7 +93,7 @@ public class ReactiveTarget : MonoBehaviour
      IEnumerator Die()
     {
         yield return new WaitForSeconds(1.75f);
-        _enemy._killed++;
+        _enemy._numberOfKilled++;
         Destroy(this.gameObject);
     }
 

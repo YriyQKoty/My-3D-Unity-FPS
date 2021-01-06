@@ -20,5 +20,6 @@ public class PlayerController : MonoBehaviour
     void CreatePlayer()
     {
         _player = Instantiate(_playerPrefab, _initialPosition, transform.rotation) as GameObject;
+        _player.transform.parent = GameObject.Find("Player").transform;
     }
 }

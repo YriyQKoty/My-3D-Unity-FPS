@@ -10,7 +10,7 @@ public class EnemyController : MonoBehaviour
     private GameOverController _controller;
     private GameObject _enemy;
     private Vector3 _initialPosition;
-    public int _killed;
+    public int _numberOfKilled;
     private int _currentQuantity;
 
     void Start()
@@ -26,7 +26,7 @@ public class EnemyController : MonoBehaviour
         {
             CreateEnemy();
         }
-        if (_killed == maxEnemiesAtLevel)
+        if (_numberOfKilled == maxEnemiesAtLevel)
         {
             _controller.EndGame();
         }
@@ -36,6 +36,7 @@ public class EnemyController : MonoBehaviour
     {
         _enemy = Instantiate(_enemyPrefab, _initialPosition, transform.rotation) as GameObject;
         _enemy.transform.Rotate(0, Random.Range(0, 360), 0);
+       // _enemy.transform.parent = GameObject.Find("Enemies").transform;
         _currentQuantity++;
     }
     

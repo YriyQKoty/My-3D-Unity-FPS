@@ -1,10 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerCharacter : MonoBehaviour
 {
     [SerializeField] private float _maxHealth;
+    public event Action<float> OnHealthPictureChanged = delegate { };
     
     private float _currentHealth;
     public bool IsAlive { get; set; }
@@ -18,6 +19,10 @@ public class PlayerCharacter : MonoBehaviour
     public void Hurt(int damage)
     {
         _currentHealth -= damage;
+        
+        float currentHealthPicture = (float) _currentHealth / (float) _maxHealth;
+        OnHealthPictureChanged(currentHealthPicture);
+
         
         if (_currentHealth.Equals(0.0f))
         {
