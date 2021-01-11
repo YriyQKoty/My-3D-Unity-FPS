@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -14,6 +10,7 @@ public class ReactiveTarget : MonoBehaviour
     private NavMeshAgent _navAgent;
     private CharacterController _character;
     private PlayerCharacter _player;
+    private EnemyController _enemy;
 
     private Collider[] _withinAggroColliders;
 
@@ -31,6 +28,7 @@ public class ReactiveTarget : MonoBehaviour
 
     void Start()
     {
+        _enemy = GameObject.Find("EnemySpawner").GetComponent<EnemyController>();
         _navAgent = GetComponent<NavMeshAgent>();
         _withinAggroColliders = new Collider[_maxColliders];
         _character = GetComponent<CharacterController>();
@@ -38,7 +36,7 @@ public class ReactiveTarget : MonoBehaviour
     
     private void OnEnable()
     {
-        this._currentHealth = this._maxHealth;
+        this._currentHealth = 5;
         IsAlive = true;
         PlayerIsDetected = false;
     }
@@ -75,16 +73,15 @@ public class ReactiveTarget : MonoBehaviour
         
         float currentHealthPicture = (float) _currentHealth / (float) _maxHealth;
         OnHealthPictureChanged(currentHealthPicture);
-        
 
-        if (_currentHealth.Equals(0.0f))
+        if (_currentHealth <= 0.0f)
         {
             IsAlive = false;
             StartCoroutine(Die());
             return;
         }
 
-        Debug.Log($"Health is damaged at {damage}. Now {_currentHealth}");
+        Debug.Log($"Enemy Health is damaged at {damage}. Now {_currentHealth}");
     }
 
     private void ChasePlayer(PlayerCharacter player)
@@ -92,11 +89,13 @@ public class ReactiveTarget : MonoBehaviour
         _player = player;
         _navAgent.SetDestination(player.transform.position);
     }
-
-    private IEnumerator Die()
+    
+     IEnumerator Die()
     {
         yield return new WaitForSeconds(1.75f);
-
+        _enemy._numberOfKilled++;
         Destroy(this.gameObject);
     }
+
+    
 }

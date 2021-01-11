@@ -5,16 +5,18 @@ using UnityEngine;
 public class AimController : MonoBehaviour
 {
     [SerializeField] Camera _camera;
-    [SerializeField] private float _reloadDelay = 2.0f;
+    [SerializeField] private float _reloadDelay = 3f;
     [SerializeField] private GameObject _bulletPrefab;
 
     private GameObject _bullet;
+    private bool _isReloading;
 
     void Start()
     {
         _camera = GetComponent<Camera>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        _isReloading = false;
     }
 
     void OnGUI()
@@ -32,7 +34,7 @@ public class AimController : MonoBehaviour
 
     void RayCast()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !_isReloading)
         {
             var point = new Vector3(_camera.pixelWidth / 2, _camera.pixelHeight / 2, 0);
             var ray = _camera.ScreenPointToRay(point);
@@ -50,7 +52,11 @@ public class AimController : MonoBehaviour
 
     private IEnumerator Reload()
     {
+        _isReloading = true;
+        
         Debug.Log("Reloading...");
         yield return new WaitForSeconds(_reloadDelay);
+        
+        _isReloading = false;
     }
 }

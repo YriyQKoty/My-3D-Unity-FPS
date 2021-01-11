@@ -1,21 +1,24 @@
-﻿
+﻿using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class WanderingAI : MonoBehaviour
 {
-
     [SerializeField] private float _speed;
     [SerializeField] private float _obstacleRange;
     [SerializeField] private GameObject _bulletPrefab;
-    
+    [SerializeField] private float reloadTime = 2f;
+
     private ReactiveTarget _target;
     private GameObject _bullet;
     private Ray _ray;
+    private bool _isReloading;
+
 
     private void Start()
     {
         _target = GetComponent<ReactiveTarget>();
+        _isReloading = false;
     }
 
     // Update is called once per frame
@@ -34,7 +37,7 @@ public class WanderingAI : MonoBehaviour
         {
             StopMove();
         }
-        
+
         Observe();
     }
 
@@ -45,7 +48,7 @@ public class WanderingAI : MonoBehaviour
 
     void StopMove()
     {
-        transform.Translate(0,0,0);
+        transform.Translate(0, 0, 0);
     }
 
     void Observe()
@@ -53,7 +56,7 @@ public class WanderingAI : MonoBehaviour
         _ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
 
-        if (Physics.SphereCast(_ray, 0.25f, out hit) && _target.IsAlive)
+        if (Physics.SphereCast(_ray, 0.25f, out hit) && _target.IsAlive && !_isReloading)
         {
             GameObject hitObject = hit.transform.gameObject;
             if (hitObject.GetComponent<PlayerCharacter>())
@@ -61,6 +64,7 @@ public class WanderingAI : MonoBehaviour
                 _bullet = Instantiate(_bulletPrefab) as GameObject;
                 _bullet.transform.position = transform.TransformPoint(Vector3.forward * 1.5f);
                 _bullet.transform.rotation = transform.rotation;
+                StartCoroutine(Reload());
             }
 
             else if (hit.distance < _obstacleRange)
@@ -71,5 +75,12 @@ public class WanderingAI : MonoBehaviour
         }
     }
 
-    
+    IEnumerator Reload()
+    {
+        _isReloading = true;
+
+        yield return new WaitForSeconds(reloadTime);
+
+        _isReloading = false;
+    }
 }
