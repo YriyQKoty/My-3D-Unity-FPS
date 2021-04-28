@@ -23,6 +23,7 @@ public class ReactiveTarget : MonoBehaviour
 
     public bool IsAlive { get; set; }
     public bool PlayerIsDetected { get; set; }
+    
 
     public event Action<float> OnHealthPictureChanged = delegate { };
 
@@ -92,7 +93,7 @@ public class ReactiveTarget : MonoBehaviour
     
      IEnumerator Die()
     {
-        yield return new WaitForSeconds(1.75f);
+        yield return new WaitForSeconds(10f);
         _enemy._numberOfKilled++;
         Destroy(this.gameObject);
     }

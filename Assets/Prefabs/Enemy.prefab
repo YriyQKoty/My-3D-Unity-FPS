@@ -312,6 +312,7 @@ MonoBehaviour:
   _aggroLayerMask:
     serializedVersion: 2
     m_Bits: 256
+  _animator: {fileID: 0}
 --- !u!114 &7336594624802644497
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -328,6 +329,7 @@ MonoBehaviour:
   _obstacleRange: 5
   _bulletPrefab: {fileID: 8816294768015372810, guid: 0c5cd997d7964b14987216fae6dad309,
     type: 3}
+  reloadTime: 2
 --- !u!143 &7336594624802644509
 CharacterController:
   m_ObjectHideFlags: 0
